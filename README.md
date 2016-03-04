@@ -39,5 +39,6 @@ optional arguments:
 
 $ ./ldcdl.py -o . -c LDC99T42 LDC95T7 -l my_login -p my_password
 Retrieved LDC99T42 to ./LDC99T42.tar.gz
-Retrieved LDC95T7 to ./LDC95T7.tar.gz```
+Retrieved LDC95T7 to ./LDC95T7.tar.gz
+```
 
