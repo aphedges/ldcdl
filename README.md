@@ -1,20 +1,20 @@
-LDC package downloading tool
+#LDC package downloading tool
 
 By Jonathan May (jonmay@isi.edu)
 
 March 4, 2016
 
 
-Requirements:
+#Requirements:
 
 * Python 2.7
 * mechanize and beautifulsoup4 python packages
 * ldc login/password
 
 
-Usage:
+#Usage:
 
-./ldcdl.py -h
+```./ldcdl.py -h
 
 $ ./ldcdl.py -h
 usage: ldcdl.py [-h] [--outdir OUTDIR] [--suffix SUFFIX]
@@ -39,5 +39,5 @@ optional arguments:
 
 $ ./ldcdl.py -o . -c LDC99T42 LDC95T7 -l my_login -p my_password
 Retrieved LDC99T42 to ./LDC99T42.tar.gz
-Retrieved LDC95T7 to ./LDC95T7.tar.gz
+Retrieved LDC95T7 to ./LDC95T7.tar.gz```
 
