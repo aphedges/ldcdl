@@ -41,3 +41,6 @@ Retrieved LDC99T42 to ./LDC99T42.tar.gz
 Retrieved LDC95T7 to ./LDC95T7.tar.gz
 ```
 
+# Known Issues
+
+* Mechanize is not memory-safe: you should have as much memory as the size of the corpus you are downloading.
