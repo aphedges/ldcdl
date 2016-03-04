@@ -15,8 +15,6 @@ March 4, 2016
 # Usage:
 
 ```
-./ldcdl.py -h
-
 $ ./ldcdl.py -h
 usage: ldcdl.py [-h] [--outdir OUTDIR] [--suffix SUFFIX]
                 [--corpus CORPUS [CORPUS ...]] [--login LOGIN]
