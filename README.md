@@ -1,20 +1,21 @@
-#LDC package downloading tool
+# LDC package downloading tool
 
 By Jonathan May (jonmay@isi.edu)
 
 March 4, 2016
 
 
-#Requirements:
+# Requirements:
 
 * Python 2.7
 * mechanize and beautifulsoup4 python packages
 * ldc login/password
 
 
-#Usage:
+# Usage:
 
-```./ldcdl.py -h
+```
+./ldcdl.py -h
 
 $ ./ldcdl.py -h
 usage: ldcdl.py [-h] [--outdir OUTDIR] [--suffix SUFFIX]
