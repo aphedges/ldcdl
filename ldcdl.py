@@ -37,11 +37,29 @@ def download(corpus, destination, login, password):
   logged_in=br.submit()
   dlpage = br.open(ldc_dl_url)
   dlpage = bs(dlpage.read(), 'html.parser')
-
-  targetstr = dlpage.find(id='user-corpora-download-table').find(text=corpus)
   dlgroup = {'class':'button download-counter-button'}
-  targeturl = targetstr.fetchParents()[1].find(attrs=dlgroup).get('href')
+  
+  targetstrs = dlpage.find(id='user-corpora-download-table').findAll(text=corpus)
+  options = [x.fetchParents()[1] for x in targetstrs]
+  labels = [[y for y in x.children][-2].text for x in options]
+  urls = [x.find(attrs=dlgroup).get('href') for x in options]
+
+  if len(options) == 1:
+    targeturl = urls[0]
+    label = labels[0]
+  else:
+    choices = [(i, x) for i, x in enumerate(labels)]
+    result = None
+    while result is None:
+      resp = input(" corpus ( %s ) ? >>" % ' '.join(map(lambda x: "%s=%s" % x, choices)))
+      if resp not in map(lambda x: x[0], choices):
+        print("Please choose from the available labels")
+      else:
+        result = resp
+    targeturl = urls[int(result)]
+    label = labels[int(result)]
   fullurl=ldc_catalog_url+targeturl
+  print "Getting "+label
   result = br.retrieve(fullurl, filename=destination)
   return result[0]
 
