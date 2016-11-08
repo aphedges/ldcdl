@@ -26,7 +26,7 @@ ldc_catalog_url="https://catalog.ldc.upenn.edu/"
 ldc_login_url=ldc_catalog_url+"login"
 ldc_dl_url=ldc_catalog_url+"organization/downloads"
 
-def download(corpus, destination, login, password):
+def download(corpus, outdir, suffix, login, password):
   ''' Download an LDC corpus to the specified location '''
   br = mechanize.Browser()
   br.set_handle_robots(False)
@@ -47,6 +47,9 @@ def download(corpus, destination, login, password):
   if len(options) == 1:
     targeturl = urls[0]
     label = labels[0]
+  elif len(options) == 0:
+    sys.stderr.write("%s not found\n" % corpus)
+    return None
   else:
     choices = [(i, x) for i, x in enumerate(labels)]
     result = None
@@ -60,8 +63,9 @@ def download(corpus, destination, login, password):
     label = labels[int(result)]
   fullurl=ldc_catalog_url+targeturl
   print "Getting "+label
+  destination=os.path.join(outdir, label+"."+suffix)
   result = br.retrieve(fullurl, filename=destination)
-  return result[0]
+  return destination
 
 def main():
   parser = argparse.ArgumentParser(description="Get corpus from LDC: A small script by Jonathan May",
@@ -80,8 +84,9 @@ def main():
 
   for corpus in args.corpus:
     ofile = os.path.join(args.outdir, corpus+"."+args.suffix)
-    result = download(corpus, ofile, args.login, args.password)
-    print("Retrieved %s to %s" % (corpus, ofile))
+    result = download(corpus, args.outdir, args.suffix, args.login, args.password)
+    if result is not None:
+      print("Retrieved %s to %s" % (corpus, result))
 
 
 
