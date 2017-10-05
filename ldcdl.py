@@ -54,7 +54,7 @@ def download(corpus, outdir, suffix, login, password):
     choices = [(i, x) for i, x in enumerate(labels)]
     result = None
     while result is None:
-      resp = input(" corpus ( %s ) ? >>" % ' '.join(map(lambda x: "%s=%s" % x, choices)))
+      resp = input("choose corpus:\n%s\n >>" % '\n'.join(map(lambda x: "%s=%s" % x, choices)))
       if resp not in map(lambda x: x[0], choices):
         print("Please choose from the available labels")
       else:
