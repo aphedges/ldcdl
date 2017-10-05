@@ -41,7 +41,8 @@ def download(corpus, outdir, suffix, login, password):
   
   targetstrs = dlpage.find(id='user-corpora-download-table').findAll(text=corpus)
   options = [x.fetchParents()[1] for x in targetstrs]
-  labels = [[y for y in x.children][-2].text for x in options]
+  # i hate you ldc
+  labels = [[y for y in x.children][-2].text.strip().split('\n')[0].strip() for x in options]
   urls = [x.find(attrs=dlgroup).get('href') for x in options]
 
   if len(options) == 1:
