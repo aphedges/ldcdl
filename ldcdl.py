@@ -19,8 +19,8 @@ import argparse
 import sys
 import os.path
 import os
-import mechanize # pip install mechanize
-from bs4 import BeautifulSoup as bs # pip install beautifulsoup4
+import mechanize
+from bs4 import BeautifulSoup as bs
 
 ldc_catalog_url="https://catalog.ldc.upenn.edu/"
 ldc_login_url=ldc_catalog_url+"login"
