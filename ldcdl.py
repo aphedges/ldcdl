@@ -33,6 +33,8 @@ def download(corpus, outdir, suffix, login, password):
   sign_in = br.open(ldc_login_url)
   br.select_form(nr = 0)
   br["spree_user[login]"]=login
+  if not password:
+    password = input("password >>")
   br["spree_user[password]"]=password
   logged_in=br.submit()
   dlpage = br.open(ldc_dl_url)
