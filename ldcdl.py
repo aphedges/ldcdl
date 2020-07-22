@@ -15,6 +15,8 @@
 
 # Copyright 2016, Jonathan May
 
+"""Get corpus from LDC: A small script by Jonathan May"""
+
 import argparse
 import os
 import os.path
@@ -23,29 +25,39 @@ import sys
 from bs4 import BeautifulSoup as bs
 import mechanize
 
-ldc_catalog_url = "https://catalog.ldc.upenn.edu/"
-ldc_login_url = ldc_catalog_url + "login"
-ldc_dl_url = ldc_catalog_url + "organization/downloads"
+LDC_CATALOG_URL = "https://catalog.ldc.upenn.edu/"
+LDC_LOGIN_URL = LDC_CATALOG_URL + "login"
+LDC_DL_URL = LDC_CATALOG_URL + "organization/downloads"
 
 
 def download(corpus, outdir, suffix, login, password):
-    ''' Download an LDC corpus to the specified location '''
+    """Download an LDC corpus to the specified location.
+
+    Args:
+        corpus: Corpus ID.
+        outdir: Output directory.
+        suffix: Output file extension.
+        login: LDC username.
+        password: LDC password.
+
+    Returns:
+        Path to downloaded file.
+    """
     br = mechanize.Browser()
     br.set_handle_robots(False)
-    sign_in = br.open(ldc_login_url)
+    br.open(LDC_LOGIN_URL)  # Sign in
     br.select_form(nr=0)
     br["spree_user[login]"] = login
     if not password:
         password = input("password >>")
     br["spree_user[password]"] = password
-    logged_in = br.submit()
-    dlpage = br.open(ldc_dl_url)
+    br.submit()  # Logged in
+    dlpage = br.open(LDC_DL_URL)
     dlpage = bs(dlpage.read(), 'html.parser')
     dlgroup = {'class': 'button download-counter-button'}
 
     targetstrs = dlpage.find(id='user-corpora-download-table').findAll(text=corpus)
     options = [x.fetchParents()[1] for x in targetstrs]
-    # i hate you ldc
     labels = [[y for y in x.children][-2].text.strip().split('\n')[0].strip() for x in options]
     urls = [x.find(attrs=dlgroup).get('href') for x in options]
 
@@ -66,7 +78,7 @@ def download(corpus, outdir, suffix, login, password):
                 result = resp
         targeturl = urls[int(result)]
         label = labels[int(result)]
-    fullurl = ldc_catalog_url + targeturl
+    fullurl = LDC_CATALOG_URL + targeturl
     print("Getting " + label)
     destination = os.path.join(outdir, label + "." + suffix)
     result = br.retrieve(fullurl, filename=destination)
@@ -74,15 +86,14 @@ def download(corpus, outdir, suffix, login, password):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Get corpus from LDC: "
-                                                 "A small script by Jonathan May",
+    parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--outdir", "-o", required=True, help="output directory")
-    parser.add_argument("--suffix", "-s", default="tar.gz", help="file suffix")
+    parser.add_argument("--outdir", "-o", required=True, help="Output directory.")
+    parser.add_argument("--suffix", "-s", default="tar.gz", help="Output file extension.")
     parser.add_argument("--corpus", "-c", required=True, nargs='+',
-                        help="corpus name(s) (e.g. LDC99T42)")
-    parser.add_argument("--login", "-l", required=True, help="ldc login")
-    parser.add_argument("--password", "-p", help="ldc password")
+                        help="Corpus name(s) (e.g. LDC99T42)")
+    parser.add_argument("--login", "-l", required=True, help="LDC username.")
+    parser.add_argument("--password", "-p", help="LDC password.")
 
     try:
         args = parser.parse_args()
@@ -90,7 +101,6 @@ def main():
         parser.error(str(msg))
 
     for corpus in args.corpus:
-        ofile = os.path.join(args.outdir, corpus + "." + args.suffix)
         result = download(corpus, args.outdir, args.suffix, args.login, args.password)
         if result is not None:
             print("Retrieved %s to %s" % (corpus, result))
