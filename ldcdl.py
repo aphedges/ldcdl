@@ -19,8 +19,7 @@
 
 import argparse
 from getpass import getpass
-import os
-import os.path
+from pathlib import Path
 import sys
 from typing import Optional
 
@@ -32,7 +31,7 @@ LDC_LOGIN_URL = LDC_CATALOG_URL + "login"
 LDC_DL_URL = LDC_CATALOG_URL + "organization/downloads"
 
 
-def download(corpus: str, outdir: str, suffix: str, login: str) -> Optional[str]:
+def download(corpus: str, outdir: Path, suffix: str, login: str) -> Optional[Path]:
     """Download an LDC corpus to the specified location.
 
     Args:
@@ -81,7 +80,7 @@ def download(corpus: str, outdir: str, suffix: str, login: str) -> Optional[str]
         label = labels[int(result)]
     fullurl = LDC_CATALOG_URL + targeturl
     print(f"Getting {label}")
-    destination = os.path.join(outdir, f"{label}.{suffix}")
+    destination = outdir / f"{label}.{suffix}"
     result = br.retrieve(fullurl, filename=destination)
     return destination
 
@@ -89,7 +88,7 @@ def download(corpus: str, outdir: str, suffix: str, login: str) -> Optional[str]
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--outdir", "-o", required=True, help="Output directory.")
+    parser.add_argument("--outdir", "-o", type=Path, required=True, help="Output directory.")
     parser.add_argument("--suffix", "-s", default="tar.gz", help="Output file extension.")
     parser.add_argument("--corpus", "-c", required=True, nargs='+',
                         help="Corpus name(s) (e.g. LDC99T42)")
