@@ -21,6 +21,7 @@ import argparse
 import os
 import os.path
 import sys
+from typing import Optional
 
 from bs4 import BeautifulSoup as bs
 import mechanize
@@ -30,7 +31,7 @@ LDC_LOGIN_URL = LDC_CATALOG_URL + "login"
 LDC_DL_URL = LDC_CATALOG_URL + "organization/downloads"
 
 
-def download(corpus, outdir, suffix, login, password):
+def download(corpus: str, outdir: str, suffix: str, login: str, password: str) -> Optional[str]:
     """Download an LDC corpus to the specified location.
 
     Args:
@@ -71,7 +72,8 @@ def download(corpus, outdir, suffix, login, password):
         choices = [(str(i), x) for i, x in enumerate(labels)]
         result = None
         while result is None:
-            resp = input("choose corpus:\n%s\n >>" % '\n'.join(map(lambda x: "%s=%s" % x, choices)))
+            resp = input("choose corpus:\n%s\n >>" % '\n'.join(map(lambda x: "%s=%s" % (x[0], x[1]),
+                                                                   choices)))
             if resp not in map(lambda x: x[0], choices):
                 print("Please choose from the available labels")
             else:
@@ -85,7 +87,7 @@ def download(corpus, outdir, suffix, login, password):
     return destination
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--outdir", "-o", required=True, help="Output directory.")
