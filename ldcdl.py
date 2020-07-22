@@ -65,14 +65,14 @@ def download(corpus: str, outdir: str, suffix: str, login: str) -> Optional[str]
         targeturl = urls[0]
         label = labels[0]
     elif len(options) == 0:
-        sys.stderr.write("%s not found\n" % corpus)
+        sys.stderr.write(f"{corpus} not found\n")
         return None
     else:
         choices = [(str(i), x) for i, x in enumerate(labels)]
         result = None
         while result is None:
-            resp = input("choose corpus:\n%s\n >>" % '\n'.join(map(lambda x: "%s=%s" % (x[0], x[1]),
-                                                                   choices)))
+            choice_strs = '\n'.join(map(lambda x: f"{x[0]}={x[1]}", choices))
+            resp = input(f"choose corpus:\n{choice_strs}\n >>")
             if resp not in map(lambda x: x[0], choices):
                 print("Please choose from the available labels")
             else:
@@ -80,8 +80,8 @@ def download(corpus: str, outdir: str, suffix: str, login: str) -> Optional[str]
         targeturl = urls[int(result)]
         label = labels[int(result)]
     fullurl = LDC_CATALOG_URL + targeturl
-    print("Getting " + label)
-    destination = os.path.join(outdir, label + "." + suffix)
+    print(f"Getting {label}")
+    destination = os.path.join(outdir, f"{label}.{suffix}")
     result = br.retrieve(fullurl, filename=destination)
     return destination
 
@@ -103,7 +103,7 @@ def main() -> None:
     for corpus in args.corpus:
         result = download(corpus, args.outdir, args.suffix, args.login)
         if result is not None:
-            print("Retrieved %s to %s" % (corpus, result))
+            print(f"Retrieved {corpus} to {result}")
 
 
 if __name__ == '__main__':
