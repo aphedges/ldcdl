@@ -73,10 +73,10 @@ def download(corpus, outdir, suffix, login, password):
 def main():
   parser = argparse.ArgumentParser(description="Get corpus from LDC: A small script by Jonathan May",
                                    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-  parser.add_argument("--outdir", "-o", help="output directory")
+  parser.add_argument("--outdir", "-o", required=True, help="output directory")
   parser.add_argument("--suffix", "-s", default="tar.gz", help="file suffix")
-  parser.add_argument("--corpus", "-c", nargs='+', help="corpus name(s) (e.g. LDC99T42)")
-  parser.add_argument("--login", "-l", help="ldc login")
+  parser.add_argument("--corpus", "-c", required=True, nargs='+', help="corpus name(s) (e.g. LDC99T42)")
+  parser.add_argument("--login", "-l", required=True, help="ldc login")
   parser.add_argument("--password", "-p", help="ldc password")
 
 
