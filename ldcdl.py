@@ -42,7 +42,7 @@ def download(corpus: str, outdir: Path, suffix: str, login: str, password: str) 
         password: LDC password.
 
     Returns:
-        Path to downloaded file.
+        Path to downloaded file if successful, None otherwise.
     """
     br = mechanize.Browser()
     br.set_handle_robots(False)
@@ -81,8 +81,8 @@ def download(corpus: str, outdir: Path, suffix: str, login: str, password: str) 
     fullurl = LDC_CATALOG_URL + targeturl
     print(f"Getting {label}")
     destination = outdir / f"{label}.{suffix}"
-    result = br.retrieve(fullurl, filename=destination)
-    return destination
+    result, _ = br.retrieve(fullurl, filename=destination)
+    return result
 
 
 def main() -> None:
