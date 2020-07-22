@@ -31,7 +31,7 @@ LDC_LOGIN_URL = LDC_CATALOG_URL + "login"
 LDC_DL_URL = LDC_CATALOG_URL + "organization/downloads"
 
 
-def download(corpus: str, outdir: Path, suffix: str, login: str) -> Optional[Path]:
+def download(corpus: str, outdir: Path, suffix: str, login: str, password: str) -> Optional[Path]:
     """Download an LDC corpus to the specified location.
 
     Args:
@@ -39,6 +39,7 @@ def download(corpus: str, outdir: Path, suffix: str, login: str) -> Optional[Pat
         outdir: Output directory.
         suffix: Output file extension.
         login: LDC username.
+        password: LDC password.
 
     Returns:
         Path to downloaded file.
@@ -48,7 +49,6 @@ def download(corpus: str, outdir: Path, suffix: str, login: str) -> Optional[Pat
     br.open(LDC_LOGIN_URL)  # Sign in
     br.select_form(nr=0)
     br["spree_user[login]"] = login
-    password = getpass("password >>")
     br["spree_user[password]"] = password
     br.submit()  # Logged in
     dlpage = br.open(LDC_DL_URL)
@@ -99,8 +99,10 @@ def main() -> None:
     except IOError as msg:
         parser.error(str(msg))
 
+    password = getpass("password >>")
+
     for corpus in args.corpus:
-        result = download(corpus, args.outdir, args.suffix, args.login)
+        result = download(corpus, args.outdir, args.suffix, args.login, password)
         if result is not None:
             print(f"Retrieved {corpus} to {result}")
 
