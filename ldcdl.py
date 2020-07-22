@@ -99,6 +99,9 @@ def main() -> None:
     except IOError as msg:
         parser.error(str(msg))
 
+    if not args.outdir.is_dir():
+        raise RuntimeError(f"`{args.outdir}` is not a valid directory.")
+
     password = getpass("password >>")
 
     for corpus in args.corpus:
