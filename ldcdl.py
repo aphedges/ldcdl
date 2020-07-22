@@ -54,7 +54,7 @@ def download(corpus, outdir, suffix, login, password):
     sys.stderr.write("%s not found\n" % corpus)
     return None
   else:
-    choices = [(i, x) for i, x in enumerate(labels)]
+    choices = [(str(i), x) for i, x in enumerate(labels)]
     result = None
     while result is None:
       resp = input("choose corpus:\n%s\n >>" % '\n'.join(map(lambda x: "%s=%s" % x, choices)))
@@ -65,7 +65,7 @@ def download(corpus, outdir, suffix, login, password):
     targeturl = urls[int(result)]
     label = labels[int(result)]
   fullurl=ldc_catalog_url+targeturl
-  print "Getting "+label
+  print("Getting "+label)
   destination=os.path.join(outdir, label+"."+suffix)
   result = br.retrieve(fullurl, filename=destination)
   return destination
@@ -82,7 +82,7 @@ def main():
 
   try:
     args = parser.parse_args()
-  except IOError, msg:
+  except IOError as msg:
     parser.error(str(msg))
 
   for corpus in args.corpus:
