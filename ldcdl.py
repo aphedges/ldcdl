@@ -18,6 +18,7 @@
 """Get corpus from LDC: A small script by Jonathan May"""
 
 import argparse
+from getpass import getpass
 import os
 import os.path
 import sys
@@ -31,7 +32,7 @@ LDC_LOGIN_URL = LDC_CATALOG_URL + "login"
 LDC_DL_URL = LDC_CATALOG_URL + "organization/downloads"
 
 
-def download(corpus: str, outdir: str, suffix: str, login: str, password: str) -> Optional[str]:
+def download(corpus: str, outdir: str, suffix: str, login: str) -> Optional[str]:
     """Download an LDC corpus to the specified location.
 
     Args:
@@ -39,7 +40,6 @@ def download(corpus: str, outdir: str, suffix: str, login: str, password: str) -
         outdir: Output directory.
         suffix: Output file extension.
         login: LDC username.
-        password: LDC password.
 
     Returns:
         Path to downloaded file.
@@ -49,8 +49,7 @@ def download(corpus: str, outdir: str, suffix: str, login: str, password: str) -
     br.open(LDC_LOGIN_URL)  # Sign in
     br.select_form(nr=0)
     br["spree_user[login]"] = login
-    if not password:
-        password = input("password >>")
+    password = getpass("password >>")
     br["spree_user[password]"] = password
     br.submit()  # Logged in
     dlpage = br.open(LDC_DL_URL)
@@ -95,7 +94,6 @@ def main() -> None:
     parser.add_argument("--corpus", "-c", required=True, nargs='+',
                         help="Corpus name(s) (e.g. LDC99T42)")
     parser.add_argument("--login", "-l", required=True, help="LDC username.")
-    parser.add_argument("--password", "-p", help="LDC password.")
 
     try:
         args = parser.parse_args()
@@ -103,7 +101,7 @@ def main() -> None:
         parser.error(str(msg))
 
     for corpus in args.corpus:
-        result = download(corpus, args.outdir, args.suffix, args.login, args.password)
+        result = download(corpus, args.outdir, args.suffix, args.login)
         if result is not None:
             print("Retrieved %s to %s" % (corpus, result))
 
