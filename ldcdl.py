@@ -93,11 +93,7 @@ def main() -> None:
     parser.add_argument("--corpus", "-c", required=True, nargs='+',
                         help="Corpus name(s) (e.g. LDC99T42)")
     parser.add_argument("--login", "-l", required=True, help="LDC username.")
-
-    try:
-        args = parser.parse_args()
-    except IOError as msg:
-        parser.error(str(msg))
+    args = parser.parse_args()
 
     if not args.outdir.is_dir():
         raise RuntimeError(f"`{args.outdir}` is not a valid directory.")
