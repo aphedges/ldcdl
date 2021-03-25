@@ -72,7 +72,7 @@ def download(corpus: str, outdir: Path, suffix: str, login: str, password: str) 
         result = None
         while result is None:
             choice_strs = '\n'.join(map(lambda x: f"{x[0]}={x[1]}", choices))
-            resp = input(f"choose corpus:\n{choice_strs}\n >>")
+            resp = input(f"choose corpus:\n{choice_strs}\n >> ")
             if resp not in map(lambda x: x[0], choices):
                 print("Please choose from the available labels")
             else:
@@ -106,7 +106,7 @@ def main() -> None:
     if not args.outdir.is_dir():
         raise RuntimeError(f"`{args.outdir}` is not a valid directory.")
 
-    password = getpass("password >>")
+    password = getpass("password >> ")
 
     for corpus in args.corpus:
         result = download(corpus, args.outdir, args.suffix, args.login, password)
