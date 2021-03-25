@@ -27,6 +27,7 @@ from typing import Optional
 from bs4 import BeautifulSoup as bs
 import mechanize
 import requests
+from tqdm import tqdm
 
 LDC_CATALOG_URL = "https://catalog.ldc.upenn.edu/"
 LDC_LOGIN_URL = LDC_CATALOG_URL + "login"
@@ -96,8 +97,11 @@ def download(corpus: str, outdir: Path, login: str, password: str) -> Optional[P
     destination = outdir / filename
     chunk_size = 1024 * 8
     with open(destination, "wb") as file:
-        for chunk in request.iter_content(chunk_size=chunk_size):
-            file.write(chunk)
+        file_size = int(request.headers["Content-Length"])
+        with tqdm(desc=f"Fetching {filename}", total=file_size, ncols=100, unit="B", unit_scale=True) as pbar:
+            for chunk in request.iter_content(chunk_size=chunk_size):
+                file.write(chunk)
+                pbar.update(len(chunk))
     return destination
 
 
