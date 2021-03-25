@@ -20,6 +20,7 @@
 import argparse
 from getpass import getpass
 from pathlib import Path
+import re
 import sys
 from typing import Optional
 
@@ -32,13 +33,12 @@ LDC_LOGIN_URL = LDC_CATALOG_URL + "login"
 LDC_DL_URL = LDC_CATALOG_URL + "organization/downloads"
 
 
-def download(corpus: str, outdir: Path, suffix: str, login: str, password: str) -> Optional[Path]:
+def download(corpus: str, outdir: Path, login: str, password: str) -> Optional[Path]:
     """Download an LDC corpus to the specified location.
 
     Args:
         corpus: Corpus ID.
         outdir: Output directory.
-        suffix: Output file extension.
         login: LDC username.
         password: LDC password.
 
@@ -81,11 +81,19 @@ def download(corpus: str, outdir: Path, suffix: str, login: str, password: str) 
         label = labels[int(result)]
     fullurl = LDC_CATALOG_URL + targeturl
     print(f"Getting {label}")
-    destination = outdir / f"{label}.{suffix}"
     cookies = requests.cookies.RequestsCookieJar()
     for cookie in br.cookiejar:
         cookies.set_cookie(cookie)
     request = requests.get(fullurl, cookies=cookies, stream=True)
+
+    # Parse file name from HTTP header
+    content_disposition = request.headers["Content-Disposition"]
+    match = re.match(r'^attachment; filename="(.*)"$', content_disposition)
+    if match is None:
+        raise RuntimeError(f"Cannot determine filename for download.")
+    filename = match.group(1)
+
+    destination = outdir / filename
     chunk_size = 1024 * 8
     with open(destination, "wb") as file:
         for chunk in request.iter_content(chunk_size=chunk_size):
@@ -97,7 +105,6 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--outdir", "-o", type=Path, required=True, help="Output directory.")
-    parser.add_argument("--suffix", "-s", default="tar.gz", help="Output file extension.")
     parser.add_argument("--corpus", "-c", required=True, nargs='+',
                         help="Corpus name(s) (e.g. LDC99T42)")
     parser.add_argument("--login", "-l", required=True, help="LDC username.")
@@ -109,7 +116,7 @@ def main() -> None:
     password = getpass("password >> ")
 
     for corpus in args.corpus:
-        result = download(corpus, args.outdir, args.suffix, args.login, password)
+        result = download(corpus, args.outdir, args.login, password)
         if result is not None:
             print(f"Retrieved {corpus} to {result}")
 
