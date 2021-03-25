@@ -25,6 +25,7 @@ from typing import Optional
 
 from bs4 import BeautifulSoup as bs
 import mechanize
+import requests
 
 LDC_CATALOG_URL = "https://catalog.ldc.upenn.edu/"
 LDC_LOGIN_URL = LDC_CATALOG_URL + "login"
@@ -81,8 +82,15 @@ def download(corpus: str, outdir: Path, suffix: str, login: str, password: str) 
     fullurl = LDC_CATALOG_URL + targeturl
     print(f"Getting {label}")
     destination = outdir / f"{label}.{suffix}"
-    result, _ = br.retrieve(fullurl, filename=destination)
-    return result
+    cookies = requests.cookies.RequestsCookieJar()
+    for cookie in br.cookiejar:
+        cookies.set_cookie(cookie)
+    request = requests.get(fullurl, cookies=cookies, stream=True)
+    chunk_size = 1024 * 8
+    with open(destination, "wb") as file:
+        for chunk in request.iter_content(chunk_size=chunk_size):
+            file.write(chunk)
+    return destination
 
 
 def main() -> None:
